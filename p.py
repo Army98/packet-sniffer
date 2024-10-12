@@ -36,6 +36,16 @@ def packet_sniff():
         if protocol_value==17:
             print('Protocol: UDP')
 
+        ip_header_length = ihl * 4  
+        
+        transport_layer_start = ip_header_length
+
+        if protocol_value in (6, 17):  
+            source_port, destination_port = unpack('!HH', raw_packet[transport_layer_start:transport_layer_start + 4])
+
+            print(f"Source Port: {source_port}")
+            print(f"Destination Port: {destination_port}")
+
         # IP flags
         ip_flags_byte = raw_packet[6]
         ip_flags = (ip_flags_byte >> 5) & 0x07
