@@ -13,12 +13,13 @@ def packet_sniff():
         first_byte = raw_packet[0]
 
         # version
+        # shift right 4 because the bit value would be too high
         version = (first_byte >> 4) & 0x0F
         print(version)
 
         # IHL
         ihl = first_byte & 0x0F
-        print(ihl)
+        print('Header Length: ', ihl)
 
         # TOS 
         tos = raw_packet[1:2]
