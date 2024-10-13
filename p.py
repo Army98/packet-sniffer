@@ -30,6 +30,19 @@ def packet_sniff():
         identification = raw_packet[4:6]
         print('ID: ', unpack('H', identification))
 
+           # IP flags
+        ip_flags_byte = raw_packet[6]
+        ip_flags = (ip_flags_byte >> 5) & 0x07
+        print(ip_flags)
+
+        # source ip
+        source_ip = raw_packet[12:16]
+        print(unpack('BBBB', source_ip))
+
+        # dest ip
+        dest_ip = raw_packet[16:20]
+        print(unpack('BBBB', dest_ip))
+
         #protocol
         protocol_value = raw_packet[9]
         if protocol_value==6:
@@ -46,19 +59,17 @@ def packet_sniff():
 
             print(f"Source Port: {source_port}")
             print(f"Destination Port: {destination_port}")
+    
+        # tcp header size
+        data_offset_offset = raw_packet[transport_layer_start+12]
+        data_offset_value = (data_offset_offset >> 4) & 0xF
 
-        # IP flags
-        ip_flags_byte = raw_packet[6]
-        ip_flags = (ip_flags_byte >> 5) & 0x07
-        print(ip_flags)
-
-        # source ip
-        source_ip = raw_packet[12:16]
-        print(unpack('BBBB', source_ip))
-
-        # dest ip
-        dest_ip = raw_packet[16:20]
-        print(unpack('BBBB', dest_ip))
+        # data
+        tcp_header_length =  data_offset_value * 4
+        data_offset = ip_header_length + tcp_header_length
+        tcp_data = raw_packet[data_offset:]
+        print(tcp_data)
+        
 
 
 packet_sniff()
